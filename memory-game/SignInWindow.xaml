@@ -5,13 +5,62 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:memory_game"
         mc:Ignorable="d"
-        Title="Sign In" Height="450" Width="600">
+        Title="Memory Game - Sign In" Height="450" Width="600">
+    <Window.DataContext>
+        <local:SignInViewModel/>
+    </Window.DataContext>
     <Grid>
-        <ListBox d:ItemsSource="{d:SampleData ItemCount=5}" Margin="44,46,370,70"/>
-        <Button Content="Button" HorizontalAlignment="Left" Margin="48,374,0,0" VerticalAlignment="Top" Height="22" Width="93"/>
-        <Button Content="Button" HorizontalAlignment="Left" Margin="176,374,0,0" VerticalAlignment="Top" Height="22" Width="93"/>
-        <Button Content="Button" HorizontalAlignment="Left" Margin="305,374,0,0" VerticalAlignment="Top" Height="22" Width="93"/>
-        <Button Content="Button" HorizontalAlignment="Left" Margin="433,374,0,0" VerticalAlignment="Top" Height="22" Width="93"/>
-        <Image HorizontalAlignment="Left" Height="150" Margin="372,46,0,0" VerticalAlignment="Top" Width="150"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <!-- Title -->
+        <TextBlock Grid.ColumnSpan="2" Text="Memory Game" 
+                   FontSize="24" FontWeight="Bold" Margin="10" 
+                   HorizontalAlignment="Center"/>
+        <!-- User List Section -->
+        <GroupBox Grid.Row="1" Grid.Column="0" Header="Select User" Margin="10">
+            <StackPanel>
+                <ListBox Height="250" Margin="5"
+                         ItemsSource="{Binding Users}"
+                         SelectedItem="{Binding SelectedUser, Mode=TwoWay}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Username}" FontSize="14"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </StackPanel>
+        </GroupBox>
+
+        <!-- User Image Display -->
+        <Border Grid.Row="1" Grid.Column="1" 
+                BorderBrush="Gray" BorderThickness="1"
+                Width="170" Height="170"
+                VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Image Source="{Binding SelectedUserImagePath}" 
+                   Stretch="Uniform"
+                   Width="150" Height="150"/>
+        </Border>
+
+        <!-- Action Buttons -->
+        <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" 
+                    HorizontalAlignment="Center" Margin="10">
+            <Button Content="Add User" Click="AddUser_Click"
+                    Width="120" Height="30" Margin="10,0"/>
+            <Button Content="Delete User" Command="{Binding DeleteUserCommand}" 
+                    IsEnabled="{Binding IsUserSelected}"
+                    Width="120" Height="30" Margin="10,0"/>
+            <Button Content="Play" Command="{Binding PlayCommand}" 
+                    IsEnabled="{Binding IsUserSelected}"
+                    Width="120" Height="30" Margin="10,0"/>
+            <Button Content="Exit" Command="{Binding ExitCommand}" 
+                    Width="120" Height="30" Margin="10,0"/>
+        </StackPanel>
     </Grid>
 </Window>

@@ -23,5 +23,29 @@ namespace memory_game
         {
             InitializeComponent();
         }
+
+        private void AddUser_Click(object sender, RoutedEventArgs e)
+        {
+            var addUserWindow = new AddUserWindow();
+            addUserWindow.Owner = this;
+
+            bool? result = addUserWindow.ShowDialog();
+
+            if (result == true)
+            {
+                // Get the ViewModel
+                var viewModel = DataContext as SignInViewModel;
+                if (viewModel != null)
+                {
+                    // Get the created user from the AddUserWindow's ViewModel
+                    var addUserViewModel = addUserWindow.DataContext as AddUserViewModel;
+                    if (addUserViewModel != null && addUserViewModel.CreatedUser != null)
+                    {
+                        // Add the new user and save
+                        viewModel.AddNewUser(addUserViewModel.CreatedUser);
+                    }
+                }
+            }
+        }
     }
 }
