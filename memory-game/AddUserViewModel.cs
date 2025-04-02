@@ -81,7 +81,7 @@ namespace memory_game
                 }
 
                 // Get all image files
-                string[] supportedExtensions = { ".jpg", ".jpeg", ".png", ".gif" };
+                string[] supportedExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".bmp" };
                 _availableImages = Directory.GetFiles(imagesFolder)
                     .Where(file => supportedExtensions.Contains(Path.GetExtension(file).ToLower()))
                     .ToList();
