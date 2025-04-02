@@ -20,20 +20,12 @@ namespace memory_game
     public partial class AddUserWindow : Window
     {
         public AddUserViewModel ViewModel { get; }
+
         public AddUserWindow()
         {
             InitializeComponent();
             ViewModel = new AddUserViewModel();
             DataContext = ViewModel;
-        }
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (ViewModel.CreateUserCommand is RelayCommand createUserCommand)
-                createUserCommand.Execute(this);
-
-            if (ViewModel.CancelCommand is RelayCommand cancelCommand)
-                cancelCommand.Execute(this);
         }
 
     }

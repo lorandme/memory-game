@@ -56,9 +56,11 @@
         <!-- Buttons -->
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
             <Button Content="Cancel" Width="100" Height="30" Margin="0,0,10,0"
-                    Command="{Binding CancelCommand}"/>
+                    Command="{Binding CancelCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"/>
             <Button Content="Create User" Width="100" Height="30"
                     Command="{Binding CreateUserCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
                     IsEnabled="{Binding CanCreateUser}"/>
         </StackPanel>
     </Grid>
