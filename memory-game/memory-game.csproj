@@ -9,8 +9,4 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="MenuViewModel.cs" />
-  </ItemGroup>
-
 </Project>

@@ -5,8 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:memory_game"
         mc:Ignorable="d"
-        Title="MenuWindow" Height="450" Width="800">
+        Title="Memory Game Menu" Height="350" Width="300">
+    <Window.DataContext>
+        <local:MenuViewModel/>
+    </Window.DataContext>
     <Grid>
-        
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Button Content="New Game" Width="150" Height="30" Margin="5" Command="{Binding NewGameCommand}"/>
+            <Button Content="Load Game" Width="150" Height="30" Margin="5" Command="{Binding OpenGameCommand}"/>
+            <Button Content="Statistics" Width="150" Height="30" Margin="5" Command="{Binding ShowStatisticsCommand}"/>
+            <Button Content="About" Width="150" Height="30" Margin="5" Command="{Binding ShowAboutCommand}"/>
+            <Button Content="Exit" Width="150" Height="30" Margin="5" Command="{Binding ExitCommand}"/>
+        </StackPanel>
     </Grid>
 </Window>

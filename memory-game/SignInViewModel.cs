@@ -90,15 +90,15 @@ namespace memory_game
 
             SaveActiveUser(SelectedUser);
 
-            var gameWindow = new GameWindow();
-            gameWindow.Show();
-
             Window currentWindow = Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
-            if (currentWindow != null)
-            {
-                currentWindow.Close();
-            }
+
+            var menuWindow = new MenuWindow();
+            menuWindow.Show();
+
+            currentWindow?.Close();
         }
+
+
 
         private void Exit(object parameter)
         {
