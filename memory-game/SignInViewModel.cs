@@ -56,12 +56,10 @@ namespace memory_game
 
         public SignInViewModel()
         {
-            // Initialize commands
             DeleteUserCommand = new RelayCommand(DeleteUser, param => IsUserSelected);
             PlayCommand = new RelayCommand(Play, param => IsUserSelected);
             ExitCommand = new RelayCommand(Exit);
 
-            // Load users from file
             LoadUsers();
         }
 
@@ -76,10 +74,8 @@ namespace memory_game
 
             if (result == MessageBoxResult.Yes)
             {
-                // Delete user's saved games if they exist
                 DeleteUserSavedGames(SelectedUser.Username);
 
-                // Remove user from collection
                 Users.Remove(SelectedUser);
                 SaveUsers();
                 SelectedUser = null;
@@ -92,14 +88,11 @@ namespace memory_game
         {
             if (SelectedUser == null) return;
 
-            // Save the current user as active user
             SaveActiveUser(SelectedUser);
 
-            // Open the game window
             var gameWindow = new GameWindow();
             gameWindow.Show();
 
-            // Close the login window
             Window currentWindow = Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
             if (currentWindow != null)
             {
@@ -118,7 +111,6 @@ namespace memory_game
 
         public void AddNewUser(User newUser)
         {
-            // Check if a user with the same username already exists
             if (Users.Any(u => u.Username.Equals(newUser.Username, StringComparison.OrdinalIgnoreCase)))
             {
                 MessageBox.Show($"A user with the name '{newUser.Username}' already exists.",
@@ -126,13 +118,10 @@ namespace memory_game
                 return;
             }
 
-            // Add the new user to the collection
             Users.Add(newUser);
 
-            // Save users to file
             SaveUsers();
 
-            // Select the new user
             SelectedUser = newUser;
 
             MessageBox.Show($"User '{newUser.Username}' created successfully!",
@@ -195,7 +184,6 @@ namespace memory_game
         {
             try
             {
-                // Delete saved games for this user
                 string savedGamePattern = $"{username}_*.json";
                 string[] savedGames = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, savedGamePattern);
 

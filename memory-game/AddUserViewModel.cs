@@ -53,16 +53,13 @@ namespace memory_game
 
         public AddUserViewModel()
         {
-            // Initialize commands
             PreviousImageCommand = new RelayCommand(PreviousImage);
             NextImageCommand = new RelayCommand(NextImage);
             CreateUserCommand = new RelayCommand(CreateUser, param => CanCreateUser);
             CancelCommand = new RelayCommand(Cancel);
 
-            // Load available images
             LoadAvailableImages();
 
-            // Set default image index
             CurrentImageIndex = 0;
         }
 
@@ -70,23 +67,18 @@ namespace memory_game
         {
             try
             {
-                // Define the path to the profile images folder
                 string imagesFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ProfileImages");
 
-                // Create the directory if it doesn't exist
                 if (!Directory.Exists(imagesFolder))
                 {
                     Directory.CreateDirectory(imagesFolder);
-                    // Copy default images to this folder in a real application
                 }
 
-                // Get all image files
                 string[] supportedExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".bmp" };
                 _availableImages = Directory.GetFiles(imagesFolder)
                     .Where(file => supportedExtensions.Contains(Path.GetExtension(file).ToLower()))
                     .ToList();
 
-                // If no images found, use some default image paths for testing
                 if (_availableImages.Count == 0)
                 {
                     _availableImages = new List<string>
@@ -96,7 +88,6 @@ namespace memory_game
                         Path.Combine(imagesFolder, "default3.png")
                     };
 
-                    // Inform the user
                     MessageBox.Show("No profile images found. Please add image files to the ProfileImages folder.",
                         "Missing Images", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
@@ -138,7 +129,6 @@ namespace memory_game
                 GamesWon = 0
             };
 
-            // Close the window with DialogResult = true
             var window = parameter as Window;
             if (window != null)
             {
@@ -149,7 +139,6 @@ namespace memory_game
 
         private void Cancel(object parameter)
         {
-            // Close the window with DialogResult = false
             var window = parameter as Window;
             if (window != null)
             {
