@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Windows;
@@ -12,6 +13,31 @@ namespace memory_game
     {
         #region Properties
 
+        private string _selectedCategory;
+        public string SelectedCategory
+        {
+            get => _selectedCategory;
+            set
+            {
+                if (_selectedCategory != value)
+                {
+                    _selectedCategory = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private string _selectedBoardSize;
+        public string SelectedBoardSize
+        {
+            get => _selectedBoardSize;
+            set
+            {
+                _selectedBoardSize = value;
+                OnPropertyChanged();
+            }
+        }
+
         private User _currentUser;
         public User CurrentUser
         {
@@ -19,6 +45,17 @@ namespace memory_game
             set
             {
                 _currentUser = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _isStandardBoard;
+        public bool IsStandardBoard
+        {
+            get => _isStandardBoard;
+            set
+            {
+                _isStandardBoard = value;
                 OnPropertyChanged();
             }
         }
@@ -32,6 +69,10 @@ namespace memory_game
         public ICommand ShowStatisticsCommand { get; private set; }
         public ICommand ExitCommand { get; private set; }
         public ICommand ShowAboutCommand { get; private set; }
+        public ICommand SelectCategoryCommand { get; private set; }
+        public ICommand SelectCustomBoardCommand { get; private set; }
+        public ICommand SelectBoardSizeCommand { get; private set; }
+        public ICommand SetGameTimeCommand { get; private set; }
 
         #endregion
 
@@ -42,6 +83,10 @@ namespace memory_game
             ShowStatisticsCommand = new RelayCommand(ShowStatistics);
             ExitCommand = new RelayCommand(Exit);
             ShowAboutCommand = new RelayCommand(ShowAbout);
+            SelectCategoryCommand = new RelayCommand(SelectCategory);
+            SelectCustomBoardCommand = new RelayCommand(SelectCustomBoard);
+            SelectBoardSizeCommand = new RelayCommand(SelectBoardSize);
+            SetGameTimeCommand = new RelayCommand(SetGameTime);
 
             LoadCurrentUser();
         }
@@ -54,7 +99,6 @@ namespace memory_game
             {
                 var gameWindow = new GameWindow();
                 gameWindow.Show();
-
                 CloseWindow();
             }
             catch (Exception ex)
@@ -67,13 +111,14 @@ namespace memory_game
         {
             try
             {
-                Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog
+                var openFileDialog = new Microsoft.Win32.OpenFileDialog
                 {
                     Filter = "JSON Files (*.json)|*.json",
                     Title = "Open Saved Game",
                     InitialDirectory = AppDomain.CurrentDomain.BaseDirectory
                 };
 
+                // Only show games from the current user
                 openFileDialog.Filter = $"{CurrentUser.Username} Saved Games (*.json)|{CurrentUser.Username}_*.json|All JSON Files (*.json)|*.json";
 
                 if (openFileDialog.ShowDialog() == true)
@@ -83,7 +128,6 @@ namespace memory_game
 
                     var gameWindow = new GameWindow();
                     gameWindow.Show();
-
                     CloseWindow();
                 }
             }
@@ -100,12 +144,9 @@ namespace memory_game
 
         private void Exit(object parameter)
         {
-
             Window currentWindow = Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
-
             var signInWindow = new SignInWindow();
             signInWindow.Show();
-
             currentWindow?.Close();
         }
 
@@ -122,6 +163,55 @@ namespace memory_game
                 MessageBoxImage.Information);
         }
 
+        private void SelectCategory(object parameter)
+        {
+            string category = (string)parameter;
+            SelectedCategory = category;
+        }
+
+        private void SelectCustomBoard(object parameter)
+        {
+            string result = Microsoft.VisualBasic.Interaction.InputBox("Enter custom board size:", "Custom Board Size", "4");
+
+            if (int.TryParse(result, out int boardSize))
+            {
+                SelectedBoardSize = result;
+            }
+            else
+            {
+                MessageBox.Show("Invalid input. Please enter a valid number.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void SelectBoardSize(object parameter)
+        {
+            string boardSize = (string)parameter;
+            if (boardSize == "Standard")
+            {
+                IsStandardBoard = true;
+                SelectedBoardSize = "Standard";
+            }
+            else
+            {
+                IsStandardBoard = false;
+                SelectedBoardSize = "Custom";
+            }
+        }
+
+        private void SetGameTime(object parameter)
+        {
+            string result = Microsoft.VisualBasic.Interaction.InputBox("Enter game time (in seconds):", "Game Time", "60");
+
+            if (int.TryParse(result, out int gameTime))
+            {
+                MessageBox.Show($"Game time set to {gameTime} seconds.", "Game Time", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            else
+            {
+                MessageBox.Show("Invalid input. Please enter a valid number.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
         #endregion
 
         #region Helper Methods
@@ -130,28 +220,13 @@ namespace memory_game
         {
             try
             {
-                if (File.Exists("active_user.json"))
-                {
-                    string json = File.ReadAllText("active_user.json");
-                    CurrentUser = JsonSerializer.Deserialize<User>(json);
-                }
-                else
-                {
-                    CurrentUser = new User
-                    {
-                        Username = "DefaultUser",
-                        ImagePath = "default.png"
-                    };
-
-                    MessageBox.Show("No active user found. Please go back to login screen.",
-                        "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
-                }
+                // Assuming user is already logged in
+                string json = File.ReadAllText("active_user.json");
+                CurrentUser = JsonSerializer.Deserialize<User>(json);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error loading user: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                CurrentUser = new User { Username = "Error" };
+                MessageBox.Show($"Error loading user data: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -163,15 +238,11 @@ namespace memory_game
 
         #endregion
 
-        #region INotifyPropertyChanged Implementation
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
-        #endregion
     }
 }
