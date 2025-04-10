@@ -139,7 +139,8 @@ namespace memory_game
                     InitialDirectory = AppDomain.CurrentDomain.BaseDirectory
                 };
 
-                openFileDialog.Filter = $"{CurrentUser.Username} Saved Games (*.json)|{CurrentUser.Username}_*.json|All JSON Files (*.json)|*.json";
+                openFileDialog.Filter = $"{CurrentUser.Username} Saved Games (*.json)|{CurrentUser.Username}_*.json";
+
 
                 if (openFileDialog.ShowDialog() == true)
                 {

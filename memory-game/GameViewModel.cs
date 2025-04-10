@@ -34,27 +34,22 @@ namespace memory_game
 
         public GameViewModel(GameState savedGame)
         {
-            // Load user
             LoadCurrentUser();
 
-            // Load saved state
             Category = savedGame.Category;
             Rows = savedGame.Rows;
             Columns = savedGame.Columns;
             _initialTime = savedGame.InitialTime;
             TimeRemaining = savedGame.TimeRemaining;
 
-            // Initialize commands
             CardClickCommand = new RelayCommand(FlipCard, CanFlipCard);
             SaveGameCommand = new RelayCommand(SaveGame);
             BackToMenuCommand = new RelayCommand(BackToMenu);
 
-            // Load saved cards
             Cards = new ObservableCollection<Card>(savedGame.Cards);
             _totalPairs = (Rows * Columns) / 2;
             _matchesFound = Cards.Count(c => c.IsMatched) / 2;
 
-            // Start the timer
             _gameTimer = new DispatcherTimer();
             _gameTimer.Interval = TimeSpan.FromSeconds(1);
             _gameTimer.Tick += GameTimer_Tick;
@@ -200,14 +195,12 @@ namespace memory_game
             {
                 if (int.TryParse(customBoardSize, out int size))
                 {
-                    // Ensure size is within bounds (2-6)
                     size = Math.Max(2, Math.Min(6, size));
                     Rows = size;
                     Columns = size;
                 }
                 else
                 {
-                    // Default to 4x4 if parsing fails
                     Rows = 4;
                     Columns = 4;
                 }
@@ -230,32 +223,26 @@ namespace memory_game
                     return;
                 }
 
-                // Get all image files
                 string[] supportedExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".bmp" };
                 var imageFiles = Directory.GetFiles(imagesFolder)
                     .Where(file => supportedExtensions.Contains(Path.GetExtension(file).ToLower()))
                     .ToList();
 
-                // If not enough images, use placeholders
                 if (imageFiles.Count < _totalPairs)
                 {
                     MessageBox.Show($"Not enough images in {Category} category. Using placeholder images.",
                         "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
 
-                    // Generate placeholder images (same image repeated)
                     var placeholderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ProfileImages", "default1.png");
                     imageFiles = Enumerable.Repeat(placeholderPath, _totalPairs).ToList();
                 }
 
-                // Take only what we need
                 var selectedImages = imageFiles.Take(_totalPairs).ToList();
 
-                // Create pairs of cards
                 for (int i = 0; i < _totalPairs; i++)
                 {
                     string imagePath = selectedImages[i];
 
-                    // Create first card of the pair
                     var card1 = new Card
                     {
                         Id = i * 2,
@@ -265,7 +252,6 @@ namespace memory_game
                         PairId = i
                     };
 
-                    // Create second card of the pair
                     var card2 = new Card
                     {
                         Id = i * 2 + 1,
@@ -301,7 +287,6 @@ namespace memory_game
         {
             if (parameter is not Card card) return false;
 
-            // Can't flip if game is over, card is already flipped/matched, or two cards are already flipped
             return !GameOver && !card.IsFlipped && !card.IsMatched && _secondSelectedCard == null;
         }
 
@@ -309,10 +294,8 @@ namespace memory_game
         {
             if (parameter is not Card card) return;
 
-            // Flip the card
             card.IsFlipped = true;
 
-            // Track which card was selected
             if (_firstSelectedCard == null)
             {
                 _firstSelectedCard = card;
@@ -321,7 +304,6 @@ namespace memory_game
             {
                 _secondSelectedCard = card;
 
-                // Check for match with slight delay
                 var dispatcherTimer = new DispatcherTimer
                 {
                     Interval = TimeSpan.FromSeconds(0.7)
@@ -343,12 +325,10 @@ namespace memory_game
             {
                 if (_firstSelectedCard.PairId == _secondSelectedCard.PairId)
                 {
-                    // Match found
                     _firstSelectedCard.IsMatched = true;
                     _secondSelectedCard.IsMatched = true;
                     _matchesFound++;
 
-                    // Check for game win
                     if (_matchesFound == _totalPairs)
                     {
                         GameWon();
@@ -356,16 +336,13 @@ namespace memory_game
                 }
                 else
                 {
-                    // No match, flip cards back
                     _firstSelectedCard.IsFlipped = false;
                     _secondSelectedCard.IsFlipped = false;
                 }
 
-                // Reset selected cards
                 _firstSelectedCard = null;
                 _secondSelectedCard = null;
 
-                // Update command availability
                 CommandManager.InvalidateRequerySuggested();
             }
         }
@@ -378,7 +355,6 @@ namespace memory_game
             }
             else
             {
-                // Time's up - game over
                 GameLost();
             }
         }
@@ -388,7 +364,6 @@ namespace memory_game
             _gameTimer.Stop();
             GameOver = true;
 
-            // Update user statistics
             CurrentUser.GamesPlayed++;
             CurrentUser.GamesWon++;
             SaveUserStatistics();
@@ -402,7 +377,6 @@ namespace memory_game
             _gameTimer.Stop();
             GameOver = true;
 
-            // Update user statistics
             CurrentUser.GamesPlayed++;
             SaveUserStatistics();
 
@@ -414,22 +388,18 @@ namespace memory_game
         {
             try
             {
-                // Read all users
                 string json = File.ReadAllText("users.json");
                 var users = JsonSerializer.Deserialize<List<User>>(json);
 
-                // Find current user and update stats
                 var user = users.FirstOrDefault(u => u.Username == CurrentUser.Username);
                 if (user != null)
                 {
                     user.GamesPlayed = CurrentUser.GamesPlayed;
                     user.GamesWon = CurrentUser.GamesWon;
 
-                    // Save back to file
                     json = JsonSerializer.Serialize(users, new JsonSerializerOptions { WriteIndented = true });
                     File.WriteAllText("users.json", json);
 
-                    // Update active user
                     File.WriteAllText("active_user.json", JsonSerializer.Serialize(CurrentUser));
                 }
             }
@@ -458,7 +428,8 @@ namespace memory_game
                 };
 
                 string json = JsonSerializer.Serialize(gameState, new JsonSerializerOptions { WriteIndented = true });
-                string fileName = $"{CurrentUser.Username}_saved_game.json";
+                string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+                string fileName = $"{CurrentUser.Username}_{timestamp}_saved_game.json";
                 File.WriteAllText(fileName, json);
 
                 MessageBox.Show($"Game saved successfully!", "Save Game", MessageBoxButton.OK, MessageBoxImage.Information);
