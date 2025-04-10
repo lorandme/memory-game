@@ -18,11 +18,6 @@ namespace memory_game
         {
             InitializeComponent();
 
-            // Register value converters as resources
-            Resources.Add("BoolToVisConverter", new BooleanToVisibilityConverter());
-            Resources.Add("InverseBoolToVisConverter", new InverseBooleanToVisibilityConverter());
-            Resources.Add("InverseBoolConverter", new InverseBooleanConverter());
-
             // Check if opening a saved game
             if (File.Exists("current_saved_game.json"))
             {

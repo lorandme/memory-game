@@ -106,9 +106,23 @@ namespace memory_game
         {
             try
             {
+                // Save current game settings
+                var gameSettings = new GameSettings
+                {
+                    Category = SelectedCategory,
+                    IsStandardBoard = IsStandardBoard,
+                    CustomBoardSize = SelectedBoardSize,
+                    GameTime = GameTime
+                };
+
+                string json = JsonSerializer.Serialize(gameSettings);
+                File.WriteAllText("game_settings.json", json);
+
+                // Start the game
+                Window currentWindow = Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
                 var gameWindow = new GameWindow();
                 gameWindow.Show();
-                CloseWindow();
+                currentWindow?.Close();
             }
             catch (Exception ex)
             {
@@ -135,9 +149,11 @@ namespace memory_game
                     string savedGamePath = openFileDialog.FileName;
                     File.Copy(savedGamePath, "current_saved_game.json", true);
 
+
+                    Window currentWindow = Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
                     var gameWindow = new GameWindow();
                     gameWindow.Show();
-                    CloseWindow();
+                    currentWindow?.Close();
                 }
             }
             catch (Exception ex)
