@@ -13,20 +13,29 @@ namespace memory_game
     {
         #region Properties
 
-        private string _selectedCategory;
+        private string _selectedCategory = "Nature";
         public string SelectedCategory
         {
             get => _selectedCategory;
             set
             {
-                if (_selectedCategory != value)
-                {
-                    _selectedCategory = value;
-                    OnPropertyChanged();
-                }
+                _selectedCategory = value;
+                OnPropertyChanged();
             }
         }
 
+        private int _gameTime = 60;
+        public int GameTime
+        {
+            get => _gameTime;
+            set
+            {
+                _gameTime = value;
+                OnPropertyChanged();
+            }
+        }
+
+        
         private string _selectedBoardSize;
         public string SelectedBoardSize
         {
@@ -167,7 +176,10 @@ namespace memory_game
         {
             string category = (string)parameter;
             SelectedCategory = category;
+
+            MessageBox.Show($"Category '{category}' selected.", "Category Selection", MessageBoxButton.OK, MessageBoxImage.Information);
         }
+
 
         private void SelectCustomBoard(object parameter)
         {
@@ -200,15 +212,16 @@ namespace memory_game
 
         private void SetGameTime(object parameter)
         {
-            string result = Microsoft.VisualBasic.Interaction.InputBox("Enter game time (in seconds):", "Game Time", "60");
+            string result = Microsoft.VisualBasic.Interaction.InputBox("Enter game time (in seconds):", "Game Time", GameTime.ToString());
 
-            if (int.TryParse(result, out int gameTime))
+            if (int.TryParse(result, out int gameTime) && gameTime > 0)
             {
+                GameTime = gameTime;
                 MessageBox.Show($"Game time set to {gameTime} seconds.", "Game Time", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             else
             {
-                MessageBox.Show("Invalid input. Please enter a valid number.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Invalid input. Please enter a valid positive number.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -243,6 +256,14 @@ namespace memory_game
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public class GameSettings
+        {
+            public string Category { get; set; }
+            public bool IsStandardBoard { get; set; }
+            public string CustomBoardSize { get; set; }
+            public int GameTime { get; set; }
         }
     }
 }
