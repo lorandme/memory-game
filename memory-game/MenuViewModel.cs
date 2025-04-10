@@ -106,7 +106,6 @@ namespace memory_game
         {
             try
             {
-                // Save current game settings
                 var gameSettings = new GameSettings
                 {
                     Category = SelectedCategory,
@@ -118,7 +117,6 @@ namespace memory_game
                 string json = JsonSerializer.Serialize(gameSettings);
                 File.WriteAllText("game_settings.json", json);
 
-                // Start the game
                 Window currentWindow = Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
                 var gameWindow = new GameWindow();
                 gameWindow.Show();
@@ -141,7 +139,6 @@ namespace memory_game
                     InitialDirectory = AppDomain.CurrentDomain.BaseDirectory
                 };
 
-                // Only show games from the current user
                 openFileDialog.Filter = $"{CurrentUser.Username} Saved Games (*.json)|{CurrentUser.Username}_*.json|All JSON Files (*.json)|*.json";
 
                 if (openFileDialog.ShowDialog() == true)
@@ -164,7 +161,16 @@ namespace memory_game
 
         private void ShowStatistics(object parameter)
         {
-            MessageBox.Show("Statistics feature will be implemented soon!", "Statistics", MessageBoxButton.OK, MessageBoxImage.Information);
+            try
+            {
+                var statisticsWindow = new StatisticsWindow();
+                statisticsWindow.Owner = Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
+                statisticsWindow.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error showing statistics: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void Exit(object parameter)
@@ -249,7 +255,6 @@ namespace memory_game
         {
             try
             {
-                // Assuming user is already logged in
                 string json = File.ReadAllText("active_user.json");
                 CurrentUser = JsonSerializer.Deserialize<User>(json);
             }

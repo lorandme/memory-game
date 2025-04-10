@@ -474,9 +474,8 @@ namespace memory_game
             _gameTimer.Stop();
 
             var menuWindow = new MenuWindow();
-            menuWindow.Show();
-
             Window currentWindow = Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
+            menuWindow.Show();
             currentWindow?.Close();
         }
         #endregion

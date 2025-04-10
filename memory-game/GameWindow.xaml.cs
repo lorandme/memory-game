@@ -18,7 +18,6 @@ namespace memory_game
         {
             InitializeComponent();
 
-            // Check if opening a saved game
             if (File.Exists("current_saved_game.json"))
             {
                 try
@@ -26,11 +25,9 @@ namespace memory_game
                     string json = File.ReadAllText("current_saved_game.json");
                     var gameState = JsonSerializer.Deserialize<GameState>(json);
 
-                    // Initialize with saved game state
                     ViewModel = new GameViewModel(gameState);
                     DataContext = ViewModel;
 
-                    // Delete the temporary file
                     File.Delete("current_saved_game.json");
                 }
                 catch (Exception ex)
@@ -48,7 +45,6 @@ namespace memory_game
 
         private void InitializeNewGame()
         {
-            // Get parameters from active menu settings
             string category = "Nature"; // Default
             bool isStandardBoard = true;
             string customBoardSize = "4";
@@ -68,7 +64,6 @@ namespace memory_game
                 }
                 else
                 {
-                    // If no settings exist, create default settings
                     var settings = new GameSettings
                     {
                         Category = category,
@@ -87,13 +82,11 @@ namespace memory_game
                     "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
 
-            // Initialize with new game
             ViewModel = new GameViewModel(category, isStandardBoard, customBoardSize, gameTime);
             DataContext = ViewModel;
         }
     }
 
-    // Value converters for the UI
     public class BooleanToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
