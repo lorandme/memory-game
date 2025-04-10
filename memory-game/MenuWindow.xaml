@@ -19,22 +19,21 @@
                               IsChecked="{Binding IsCategorySelected, ConverterParameter=Nature, Mode=TwoWay}"
                               Command="{Binding SelectCategoryCommand}"
                               CommandParameter="Nature"/>
-                    <MenuItem Header="Animals"
+                    <MenuItem Header="Cats"
                               IsCheckable="True"
                               IsChecked="{Binding IsCategorySelected, ConverterParameter=Animals, Mode=TwoWay}"
                               Command="{Binding SelectCategoryCommand}"
-                              CommandParameter="Animals"/>
-                    <MenuItem Header="Tech"
+                              CommandParameter="Cats"/>
+                    <MenuItem Header="Food"
                               IsCheckable="True"
                               IsChecked="{Binding IsCategorySelected, ConverterParameter=Tech, Mode=TwoWay}"
                               Command="{Binding SelectCategoryCommand}"
-                              CommandParameter="Tech"/>
+                              CommandParameter="Food"/>
                 </MenuItem>
 
                 <Separator/>
                 <MenuItem Header="New Game" Command="{Binding NewGameCommand}"/>
                 <MenuItem Header="Open Game" Command="{Binding OpenGameCommand}"/>
-                <MenuItem Header="Save Game" Command="{Binding SaveGameCommand}"/>
                 <MenuItem Header="Statistics" Command="{Binding ShowStatisticsCommand}"/>
                 <Separator/>
                 <MenuItem Header="Exit" Command="{Binding ExitCommand}"/>

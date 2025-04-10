@@ -74,8 +74,6 @@
                                         </Binding.Converter>
                                     </Binding>
                                 </Border.Visibility>
-                                <TextBlock Text="?" FontSize="24" FontWeight="Bold" 
-                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
 
                             <Border BorderBrush="Gray" BorderThickness="1">
@@ -86,7 +84,7 @@
                                         </Binding.Converter>
                                     </Binding>
                                 </Border.Visibility>
-                                <Image Source="{Binding ImagePath}" Stretch="Uniform"/>
+                                <Image Source="{Binding ImagePath}" Stretch="UniformToFill"/>
                             </Border>
                         </Grid>
                     </Button>
